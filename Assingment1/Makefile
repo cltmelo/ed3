@@ -11,15 +11,3 @@ all:
 
 run:
 	@$(BINARY)
-
-clear:
-	@clear
-
-val: clear all
-	@valgrind $(VFLAGS) $(BINARY)
-
-zip:
-	zip -r data.zip $(PROG) $(INCLUDES) $(SOURCES) Makefile
-
-clean:
-	rm $(BINARY)
