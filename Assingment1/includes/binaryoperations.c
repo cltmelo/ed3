@@ -6,7 +6,7 @@ FILE *abrirArquivoLeitura(const char *nomeArquivo) {
 }
 
 FILE *abrirArquivoEscrita(const char *nomeArquivo) {
-    return fopen(nomeArquivo, "wb"); // Ponteiro no começo do arquivo
+    return fopen(nomeArquivo, "wb+"); // Ponteiro no começo do arquivo
 }
 
 void fecharArquivo(FILE *arquivo) {
