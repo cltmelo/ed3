@@ -8,23 +8,24 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "../includes/binaryoperations.h"
 
 
 
-# define LIXO '$'
-
-// Função para printar arquivo
-void Lerarquivo(FILE *arquivo){
-    char linha[100]; // Ajustar conforme necessário
-    while (fgets(linha, sizeof(linha), arquivo) != NULL){
-        printf("%s", linha);
+Registro* inicializarRegistro() {
+    Registro *r = (Registro*)malloc(sizeof(Registro));
+    if (r == NULL) {
+        perror("Erro ao alocar memória para o registro");
+        exit(EXIT_FAILURE);
     }
+    r->removido = '0';
+    r->grupo = 0;
+    r->popularidade = 0;
+    r->peso = 0;
+
+    return r;
 }
-
-
-
-// Modular funções depois
 
 
 FILE *abrirArquivoLeitura(const char *nomeArquivo) {
@@ -41,9 +42,10 @@ void fecharArquivo(FILE *arquivo) {
     }
 }
 
-Cabecalho* inicializarCabecalho(Cabecalho *cabecalho) {
+Cabecalho* inicializarCabecalho() {
+    Cabecalho* cabecalho = (Cabecalho*)malloc(sizeof(Cabecalho));
     cabecalho->status = '1';  // Inicializa como arquivo consistente
-    cabecalho->proxRRN = 0;   // Valor padrão para o próximo RRN
+    cabecalho->proxRRN = 12;   // Valor padrão para o próximo RRN
     cabecalho->nroTecnologias = 0;  // Inicializa com zero tecnologias
     cabecalho->nroParesTecnologias = 0;  // Inicializa com zero pares de tecnologias
     return cabecalho;
@@ -55,43 +57,43 @@ int lerRegistro(FILE *arquivo, Registro *registro) {
     }
     return 0; // Falha na leitura
 }
-int atualizarCabecalho(FILE *arquivo, const Cabecalho *cabecalho) {
-    fseek(arquivo, 0, SEEK_SET);  // Move o cursor para o início do arquivo
 
-    if (fwrite(cabecalho, sizeof(Cabecalho), 1, arquivo) == 1) {
-        fflush(arquivo);  // Força a escrita imediata no arquivo
-        return 1;         // Escrita bem-sucedida
-    }
-
-    return 0;  // Falha na escrita
+void atualizarCabecalho(FILE* arquivo, Cabecalho* cabecalho){
+    fseek(arquivo, 0, SEEK_SET);
+    fwrite(&cabecalho, 13, 1, arquivo);
 }
+
 int escreverRegistro(FILE *arquivo, const Registro *registro, int tamRegistro, Cabecalho *c){
-    
-    if (fwrite(registro, sizeof(Registro), 1, arquivo) == 1){
-        c->nroParesTecnologias;
-        //atualizarCabecalho(arquivo, c);
-        return 1; // Escrita bem-sucedida
+    fseek(arquivo, c->proxRRN, SEEK_SET);
+    if (fwrite(&registro, tamRegistro, 1, arquivo) != 1) {
+        printf("Erro ao escrever os dados do registro\n");
+        return 0; // Falha na escrita
     }
-    return 0; // Falha na escrita
+    c->nroParesTecnologias++;
+    c->proxRRN += 76;
+    char LIXO = '$';
+    for (int i  = tamRegistro; i < 76; i++){
+        if (fwrite(&LIXO, 1, 1, arquivo) != 1) {
+            printf("Erro ao preencher os bytes restantes com '$'\n");
+        return 0;
+        }
+    }
+         
+    //atualizarCabecalho(arquivo, c);
+    return 1; // Escrita bem-sucedida
 }
 
 Registro* Convert(const char* Linha){
-    Registro* registro;
-
+    Registro* registro = inicializarRegistro();
     // Inicializa a string variável com NULL (vazia)
-    registro->tecnologiaOrigem.tamanho = 0;
-    registro->tecnologiaOrigem.string = NULL;
-    registro->tecnologiaDestino.tamanho = 0;
-    registro->tecnologiaDestino.string = NULL;
 
     char *token = strtok((char *)Linha, ",");
-
-    registro->removido = '0';
+    
     if (token != NULL) {
         registro->tecnologiaOrigem.tamanho = strlen(token);
         registro->tecnologiaOrigem.string = strdup(token);
         token = strtok(NULL, ",");
-    }
+        }
 
     if (token != NULL) {
         registro->grupo = atoi(token);
@@ -113,21 +115,27 @@ Registro* Convert(const char* Linha){
         registro->peso = atoi(token);
     }
     
+    registro->removido = '0';
 
     return registro;
 }
 
 
-void LerBIN(FILE *arquivo) {
-    // Move o cursor para o início do arquivo
-    fseek(arquivo, 0, SEEK_SET);
+    void LerBIN (FILE *arquivo) {
+        // Move o cursor para o início do arquivo
+        fseek(arquivo, 0, SEEK_SET);
 
-    Registro registro;
-
-    while (fread(&registro, sizeof(Registro), 1, arquivo) == 1) {
-        printf("%s, %d, %d, %s, %d\n", registro.tecnologiaOrigem.string, registro.grupo, registro.popularidade, registro.tecnologiaDestino.string, registro.peso); 
+        Registro* registro;
+        
+        while (fread(&registro, sizeof(Registro), 1, arquivo) == 1) {
+            int tamRegistro = 21 + registro->tecnologiaDestino.tamanho + registro->tecnologiaOrigem.tamanho;
+            char resto[76-tamRegistro];
+            fread(resto, 1, 76-tamRegistro, arquivo);
+            printf("%s, %d, %d, %s, %d\n", registro->tecnologiaOrigem.string, registro->grupo, registro->popularidade, registro->tecnologiaDestino.string, registro->peso); 
+        }
     }
-}
+
+
 
 int main(){
     FILE *arquivo = fopen("../../docs/tecnologia.csv", "r"); // Ponteiro apontando para o arquivo csv
@@ -137,8 +145,10 @@ int main(){
     char linha[76];
 
     fgets(linha, sizeof(linha), arquivo); // Linha para ignorar primeira linha do arquivo de entrada
-    Registro* r;
-    Cabecalho* c = inicializarCabecalho(c);
+    Registro* r = inicializarRegistro();
+    Cabecalho* c = inicializarCabecalho();
+    fseek(BIN, 0, SEEK_SET);
+    fwrite(&c, sizeof(Cabecalho), 1, BIN);
     while (fgets(linha, sizeof(linha), arquivo) != NULL){
         r = Convert(linha);
         int tamRegistro = 21 + (r->tecnologiaDestino.tamanho) + (r->tecnologiaOrigem.tamanho);
@@ -157,7 +167,8 @@ int main(){
         break;
     }
     */
-    LerBIN(BIN);
+    //LerBIN (BIN);
+    printf("%d", c->nroParesTecnologias);
     fecharArquivo(BIN);
     fclose(arquivo);
     return 0;
