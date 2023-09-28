@@ -1,3 +1,6 @@
+#include "../includes/funcoesfornecidas.h"
+#include "../includes/binaryoperations.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
