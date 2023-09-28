@@ -10,6 +10,10 @@
 #include <stdlib.h>
 #include "../includes/binaryoperations.h"
 
+
+
+# define LIXO '$'
+
 // Função para printar arquivo
 void Lerarquivo(FILE *arquivo){
     char linha[100]; // Ajustar conforme necessário
@@ -18,16 +22,130 @@ void Lerarquivo(FILE *arquivo){
     }
 }
 
-int main(){
-    FILE *arquivo = fopen("../docs/tecnologia.csv", "r"); // Ponteiro apontando para o arquivo csv
+
+
+// Modular funções depois
+
+
+FILE *abrirArquivoLeitura(const char *nomeArquivo) {
+    return fopen(nomeArquivo, "rb"); // Ponteiro no começo do arquivo
+}
+
+FILE *abrirArquivoEscrita(const char *nomeArquivo) {
+    return fopen(nomeArquivo, "wb+"); // Ponteiro no começo do arquivo
+}
+
+void fecharArquivo(FILE *arquivo) {
+    if (arquivo != NULL) {
+        fclose(arquivo);
+    }
+}
+
+Cabecalho* inicializarCabecalho(Cabecalho *cabecalho) {
+    cabecalho->status = '1';  // Inicializa como arquivo consistente
+    cabecalho->proxRRN = 0;   // Valor padrão para o próximo RRN
+    cabecalho->nroTecnologias = 0;  // Inicializa com zero tecnologias
+    cabecalho->nroParesTecnologias = 0;  // Inicializa com zero pares de tecnologias
+    return cabecalho;
+}
+
+int lerRegistro(FILE *arquivo, Registro *registro) {
+    if (fread(registro, sizeof(Registro), 1, arquivo) == 1) {
+        return 1; // Leitura bem-sucedida
+    }
+    return 0; // Falha na leitura
+}
+int atualizarCabecalho(FILE *arquivo, const Cabecalho *cabecalho) {
+    fseek(arquivo, 0, SEEK_SET);  // Move o cursor para o início do arquivo
+
+    if (fwrite(cabecalho, sizeof(Cabecalho), 1, arquivo) == 1) {
+        fflush(arquivo);  // Força a escrita imediata no arquivo
+        return 1;         // Escrita bem-sucedida
+    }
+
+    return 0;  // Falha na escrita
+}
+int escreverRegistro(FILE *arquivo, const Registro *registro, int tamRegistro, Cabecalho *c){
     
-    Lerarquivo(arquivo);
-    fclose(arquivo);
+    if (fwrite(registro, sizeof(Registro), 1, arquivo) == 1){
+        c->nroParesTecnologias;
+        //atualizarCabecalho(arquivo, c);
+        return 1; // Escrita bem-sucedida
+    }
+    return 0; // Falha na escrita
+}
+
+Registro* Convert(const char* Linha){
+    Registro* registro;
+
+    // Inicializa a string variável com NULL (vazia)
+    registro->tecnologiaOrigem.tamanho = 0;
+    registro->tecnologiaOrigem.string = NULL;
+    registro->tecnologiaDestino.tamanho = 0;
+    registro->tecnologiaDestino.string = NULL;
+
+    char *token = strtok((char *)Linha, ",");
+
+    registro->removido = '0';
+    if (token != NULL) {
+        registro->tecnologiaOrigem.tamanho = strlen(token);
+        registro->tecnologiaOrigem.string = strdup(token);
+        token = strtok(NULL, ",");
+    }
+
+    if (token != NULL) {
+        registro->grupo = atoi(token);
+        token = strtok(NULL, ",");
+    }
+
+    if (token != NULL) {
+        registro->popularidade = atoi(token);
+        token = strtok(NULL, ",");
+    }
+
+    if (token != NULL) {
+        registro->tecnologiaDestino.tamanho = strlen(token);
+        registro->tecnologiaDestino.string = strdup(token);
+        token = strtok(NULL, ",");
+    }
+
+    if (token != NULL) {
+        registro->peso = atoi(token);
+    }
+    
+
+    return registro;
+}
 
 
+void LerBIN(FILE *arquivo) {
+    // Move o cursor para o início do arquivo
+    fseek(arquivo, 0, SEEK_SET);
 
+    Registro registro;
+
+    while (fread(&registro, sizeof(Registro), 1, arquivo) == 1) {
+        printf("%s, %d, %d, %s, %d\n", registro.tecnologiaOrigem.string, registro.grupo, registro.popularidade, registro.tecnologiaDestino.string, registro.peso); 
+    }
+}
+
+int main(){
+    FILE *arquivo = fopen("../../docs/tecnologia.csv", "r"); // Ponteiro apontando para o arquivo csv
+    
+    FILE* BIN = abrirArquivoEscrita("data.bin");
+
+    char linha[76];
+
+    fgets(linha, sizeof(linha), arquivo); // Linha para ignorar primeira linha do arquivo de entrada
+    Registro* r;
+    Cabecalho* c = inicializarCabecalho(c);
+    while (fgets(linha, sizeof(linha), arquivo) != NULL){
+        r = Convert(linha);
+        int tamRegistro = 21 + (r->tecnologiaDestino.tamanho) + (r->tecnologiaOrigem.tamanho);
+        escreverRegistro(BIN, r, tamRegistro, c);
+    }
+    
     /*
-
     Estrutura de Decisão para executar funcionalidade escolhida pelo usuário
     switch (option){
         case 1:
@@ -38,7 +156,9 @@ int main(){
 
         break;
     }
-    
     */
+    LerBIN(BIN);
+    fecharArquivo(BIN);
+    fclose(arquivo);
     return 0;
 }
