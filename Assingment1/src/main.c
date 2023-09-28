@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../includes/binaryoperations.h"
+// #include "../includes/funcoesFornecidas.h"
 
 // Função para printar arquivo
 void Lerarquivo(FILE *arquivo){

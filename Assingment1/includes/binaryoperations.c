@@ -1,4 +1,4 @@
-#include "../includes/funcoesfornecidas.h"
+// #include "../includes/funcoesFornecidas.h"
 #include "../includes/binaryoperations.h"
 
 FILE *abrirArquivoLeitura(const char *nomeArquivo) {

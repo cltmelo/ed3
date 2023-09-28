@@ -1,6 +1,7 @@
 #ifndef BINARYOPERATIONS_H
 #define BINARYOPERATIONS_H
 
+#include "../includes/funcoesFornecidas.h"
 #include <stdio.h>
 
 
