@@ -3,6 +3,7 @@
 
 #include "../includes/funcoesFornecidas.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 
 // Quantidade de bytes do registro de dados
@@ -22,10 +23,10 @@
 
 // Cabeçalho com 13 bytes
 typedef struct {
-    char status;  // 1 para arquivo consistente, 0 para incosistente
-    int proxRRN;
-    int nroTecnologias;
-    int nroParesTecnologias;
+    char status;  //Pode assumir os valores ‘0’, para indicar que o arquivo de dados está inconsistente, ou ‘1’, para indicar que o arquivo de dados está consistente. Ao se abrir um arquivo para escrita, seu status deve ser ‘0’ e, ao finalizar o uso desse arquivo, seu status deve ser ‘1’ – tamanho: string de 1 byte.
+    int proxRRN; //Deve ser iniciado com o valor ‘0’ e deve ser alterado sempre que necessário – tamanho: inteiro de 4 bytes.
+    int nroTecnologias; //Note que, se duas ou mais tecnologias têm o mesmo nome, elas são consideradas a mesma tecnologia. Deve ser iniciado com o valor ‘0’ e deve ser alterado sempre que necessário – tamanho: inteiro de 4 bytes.
+    int nroParesTecnologias; //Deve ser iniciado com o valor ‘0’ e deve ser alterado sempre que necessário – tamanho: inteiro de 4 bytes.
 } Cabecalho;
 
 typedef struct {
@@ -47,6 +48,13 @@ typedef struct {
     
 } Registro;
 
+//OBS: Os valores nulos nos campos inteiros de tamanho fixo devem ser devem ser
+//      representados pelo valor -1.
+// Os valores nulos nos campos de tamanho variável devem ser manipulados da
+// seguinte forma: o indicador de tamanho deve armazenar o valor zero.
+
+
+
 // Função para abrir um arquivo binário para leitura
 FILE *abrirArquivoLeitura(const char *nomeArquivo);
 
@@ -66,15 +74,23 @@ int escreverRegistro(FILE *arquivo, const Registro *registro);
 
 /*
 -----------------------------------------------------------------------------------------------
-Funionalidades requeridas:
+Header para as funções auxiliares.
 -----------------------------------------------------------------------------------------------
 */
 
-// 1. Create Table
-// 2. Select From
-// 3. Select Where
-// 4. Select RRN
+int byte_offset(int RRN); //retorna o byte offset de um registro
+void lerArquivo(FILE *arquivo);
+void preencheLixo(char* campo, int tam_campo); //adicionar lixo aos bytes vazios
 
-
+/*
+-----------------------------------------------------------------------------------------------
+Funionalidades requeridas:
+    1. Create Table
+    2. Select From
+    3. Select Where
+    4. Select RRN
+-----------------------------------------------------------------------------------------------
+*/
+short int crateTabel(const char *csvArchiveName, const char *binArchiveName);
 
 #endif /* BINARYOPERATIONS_H */

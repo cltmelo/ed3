@@ -11,18 +11,11 @@
 #include "../includes/binaryoperations.h"
 // #include "../includes/funcoesFornecidas.h"
 
-// Função para printar arquivo
-void Lerarquivo(FILE *arquivo){
-    char linha[100]; // Ajustar conforme necessário
-    while (fgets(linha, sizeof(linha), arquivo) != NULL){
-        printf("%s", linha);
-    }
-}
 
 int main(){
     FILE *arquivo = fopen("../docs/tecnologia.csv", "r"); // Ponteiro apontando para o arquivo csv
     
-    Lerarquivo(arquivo);
+    lerArquivo(arquivo);
     fclose(arquivo);
 
 
