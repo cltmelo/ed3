@@ -48,12 +48,25 @@ int lerRegistro(FILE *arquivo, Registro *registro) {
     return 0; // Falha na leitura
 }
 
-int escreverRegistro(FILE *arquivo, const Registro *registro) {
-    if (fwrite(registro, sizeof(Registro), 1, arquivo) == 1) {
-        return 1; // Escrita bem-sucedida
-    }
-    return 0; // Falha na escrita
+void escreverRegistro(FILE *arquivo, const Registro *registro) { //REVISAR E VER SE FAZ SENTIDO***********
+    
+    fwrite(&registro->removido, sizeof(char), 1, arquivo);
+    fwrite(&registro->grupo, sizeof(int), 1, arquivo);
+    fwrite(&registro->popularidade, sizeof(int), 1, arquivo);
+    fwrite(&registro->peso, sizeof(int), 1, arquivo);
+    fwrite(&registro->tecnologiaOrigem.tamanho, sizeof(int), 1, arquivo);
+    fwrite(registro->tecnologiaOrigem.string, sizeof(char), registro->tecnologiaOrigem.tamanho, arquivo);
+    fwrite(&registro->tecnologiaDestino.tamanho, sizeof(int), 1, arquivo);
+    fwrite(registro->tecnologiaDestino.string, sizeof(char), registro->tecnologiaDestino.tamanho, arquivo);
+
 }
+
+// void escreverRegistro(FILE *arquivo, const Registro *registro) {
+//     if (fwrite(registro, sizeof(Registro), 1, arquivo) == 1) {
+//         return 1; // Escrita bem-sucedida
+//     }
+//     return 0; // Falha na escrita
+// }
 
 // Função para printar arquivo
 void lerArquivo(FILE *arquivo){
@@ -65,9 +78,19 @@ void lerArquivo(FILE *arquivo){
 
 /*
 -----------------------------------------------------------------------------------------------
+*/
+
+
+
+
+
+
+/*
+-----------------------------------------------------------------------------------------------
 Funções auxiliares.
 -----------------------------------------------------------------------------------------------
 */
+
 void preencheLixo(char* campo, int tam_campo){
 
     int i = 0;
@@ -95,6 +118,14 @@ int byte_offset(int RRN){
 
 /*
 -----------------------------------------------------------------------------------------------
+*/
+
+
+
+
+
+/*
+-----------------------------------------------------------------------------------------------
 Funcionalidades do algoritmo: 
     1. Create Table
     2. Select From
@@ -109,6 +140,7 @@ short int crateTabel(const char *csvArchiveName, const char *binArchiveName)
     FILE *bin = abrirArquivoEscrita(binArchiveName); // criar o .bin
 
     if (csv == NULL || bin == NULL)
+        printf("\nFalha no processamento do arquivo.\n");
         return 1; // Caso o csv não seja encontrado ou o bin não criado, passa 1 DE ERRO para o file
 
     Cabecalho c;
@@ -126,6 +158,7 @@ short int crateTabel(const char *csvArchiveName, const char *binArchiveName)
     // r.tecnologiaDestino;
 
 
+
     
     
     
@@ -139,3 +172,7 @@ short int crateTabel(const char *csvArchiveName, const char *binArchiveName)
     
     return 0;
 }
+
+/*
+-----------------------------------------------------------------------------------------------
+*/

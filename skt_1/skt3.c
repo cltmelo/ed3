@@ -1,61 +1,58 @@
-#include <stdio.h>
-#include <stdlib.h>
+// ... [Código anterior]
 
-// Estruturas de dados
-typedef struct {
-    // Defina os campos do registro aqui
-    // Exemplo:
-    // char nomeTecnologiaOrigem[50];
-    // int grupo;
-    // ...
-} Registro;
+// Função para ler um registro do arquivo CSV
+Dados lerRegistroCSV(FILE *csv) {
+    Dados dados;
+    char buffer[100]; // Buffer temporário para leitura
 
-// Protótipos de funções
-void obterDadosDeArquivo(char *nomeArquivo);
-void gerarArquivoBinario(Registro *registros, int numRegistros, char *nomeArquivoBinario);
-Registro *lerArquivoBinario(char *nomeArquivoBinario, int *numRegistros);
-void buscarRegistro(Registro *registros, int numRegistros, char *chaveBusca);
+    // Inicializar campos
+    dados.removido = '-';
+    dados.nomeTecnologiaOrigem.string = NULL;
+    dados.nomeTecnologiaDestino.string = NULL;
 
-int main() {
-    int opcao;
-    char nomeArquivo[100];
-    Registro *registros = NULL;
-    int numRegistros = 0;
+    // Ler campos do CSV
+    fscanf(csv, "%d,%d,%d,", &dados.grupo, &dados.popularidade, &dados.peso);
+    scan_quote_string(buffer);
+    dados.nomeTecnologiaOrigem.tamanho = strlen(buffer);
+    dados.nomeTecnologiaOrigem.string = strdup(buffer);
+    scan_quote_string(buffer);
+    dados.nomeTecnologiaDestino.tamanho = strlen(buffer);
+    dados.nomeTecnologiaDestino.string = strdup(buffer);
 
-    printf("Digite a opção desejada:\n");
-    scanf("%d", &opcao);
+    return dados;
+}
 
-    switch(opcao) {
-        case 1: // Suponha que 1 seja a opção para obter dados de um arquivo
-            printf("Digite o nome do arquivo de entrada:\n");
-            scanf("%s", nomeArquivo);
-            obterDadosDeArquivo(nomeArquivo);
-            break;
-        case 2: // Suponha que 2 seja a opção para gerar arquivo binário
-            // Implementação da funcionalidade aqui
-            break;
-        // Adicione mais cases para outras funcionalidades
-        default:
-            printf("Opção inválida!\n");
-            break;
+short int functionality_1(const char csvArchiveName[], const char binArchiveName[]) {
+    FILE *csv = archive_open(csvArchiveName); // buscar o csv
+    FILE *bin = fopen(binArchiveName, "wb+");  // criar/abrir o bin para escrita e leitura
+
+    if (csv == NULL || bin == NULL) {
+        printf("\nFalha no processamento do arquivo.\n");
+        return 1; // Erro ao abrir arquivos
     }
 
-    return 0;
+    bin = init_bin(bin); // Inicializar cabeçalho do arquivo binário
+
+    Dados dados;
+    while (!feof(csv)) {
+        dados = lerRegistroCSV(csv); // Ler registro do CSV
+        Escrever_Dados(bin, dados); // Escrever registro no binário
+
+        // Liberar memória alocada para strings
+        free(dados.nomeTecnologiaOrigem.string);
+        free(dados.nomeTecnologiaDestino.string);
+    }
+
+    // Atualizar cabeçalho (se necessário)
+    Atualizar_Cabecalho(bin, /*nroTecnologia*/, /*nroParesTecnologia*/);
+
+    fclose(csv);
+    fclose(bin);
+
+    binarioNaTela(binArchiveName); // Mostrar saída do arquivo binário
+
+    return 0; // Sucesso
 }
 
-void obterDadosDeArquivo(char *nomeArquivo) {
-    // Implementação da funcionalidade aqui
-}
+// ... [Restante do código]
 
-void gerarArquivoBinario(Registro *registros, int numRegistros, char *nomeArquivoBinario) {
-    // Implementação da funcionalidade aqui
-}
-
-Registro *lerArquivoBinario(char *nomeArquivoBinario, int *numRegistros) {
-    // Implementação da funcionalidade aqui
-    return NULL; // Retorne os registros lidos
-}
-
-void buscarRegistro(Registro *registros, int numRegistros, char *chaveBusca) {
-    // Implementação da funcionalidade aqui
-}

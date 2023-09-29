@@ -68,7 +68,7 @@ void fecharArquivo(FILE *arquivo);
 int lerRegistro(FILE *arquivo, Registro *registro);
 
 // Função para escrever um registro no arquivo binário
-int escreverRegistro(FILE *arquivo, const Registro *registro);
+void escreverRegistro(FILE *arquivo, const Registro *registro);
 
 
 
@@ -79,18 +79,22 @@ Header para as funções auxiliares.
 */
 
 int byte_offset(int RRN); //retorna o byte offset de um registro
-void lerArquivo(FILE *arquivo);
+void lerArquivo(FILE *arquivo);//******************************************
 void preencheLixo(char* campo, int tam_campo); //adicionar lixo aos bytes vazios
+void atualizaCabeçalho();// *************************************************
 
 /*
 -----------------------------------------------------------------------------------------------
 Funionalidades requeridas:
-    1. Create Table
-    2. Select From
-    3. Select Where
-    4. Select RRN
+    1. Create Table: Cria uma tabela com os campos especificados com base em um .csv e gera de saída um .bin
+    2. Select From: IMporime todos os registros de um .bin
+    3. Select Where: Imprime todos os registros que contém os campo(s) especificado(s)
+    4. Select RRN: Imprime o registro de determiando RRN
 -----------------------------------------------------------------------------------------------
 */
 short int crateTabel(const char *csvArchiveName, const char *binArchiveName);
+int selectFrom();
+int selectWhere();
+int selectRRN();
 
 #endif /* BINARYOPERATIONS_H */
