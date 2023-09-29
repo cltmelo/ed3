@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/Samsung/OneDrive/Documentos/GitHub/ed3/src",
-      "program": "c:/Users/Samsung/OneDrive/Documentos/GitHub/ed3/src/build/Debug/outDebug",
+      "cwd": "c:/Users/Samsung/OneDrive/Documentos/GitHub/ed3/Assingment1/src",
+      "program": "c:/Users/Samsung/OneDrive/Documentos/GitHub/ed3/Assingment1/src/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
