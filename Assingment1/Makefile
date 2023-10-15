@@ -1,13 +1,30 @@
 CC = gcc
-INCLUDES = includes
-SOURCES = src/*.c
-BINARY = ./main
-PROG = main.c
-FLAGS = -g -lm -Wall -Werror
-VFLAGS = --show-leak-kinds=all --track-origins=yes --leak-check=full -s
+CFLAGS = -Wall -g -I./includes
+TARGET = main
 
-all:
-	@$(CC) -o $(BINARY) $(PROG) $(SOURCES) -I $(INCLUDES) $(FLAGS)
+all: $(TARGET)
 
-run:
-	@$(BINARY)
+$(TARGET): $(wildcard src/*.c)
+	$(CC) $(CFLAGS) $^ -o $@
+
+run: $(TARGET)
+	./$(TARGET)
+
+valin: $(TARGET)
+	valgrind --leak-check=full --show-leak-kinds=all -s ./$(TARGET) < tests/2.in
+
+valout: $(TARGET)
+	valgrind --leak-check=full --show-leak-kinds=all -s ./$(TARGET) > test.out
+
+# Pode trocar os números para diferentes testes
+test: $(TARGET)
+	for number in `seq 3 3`; do \
+	./$(TARGET) < tests/$$number.in > tests/$$number.out2; \
+	diff -s tests/$$number.out tests/$$number.out2; \
+	done
+
+hex:
+	hexdump -Cv tec.bin
+
+dif:
+	diff tests/3.out tests/3.out2

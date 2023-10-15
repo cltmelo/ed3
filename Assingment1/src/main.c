@@ -8,31 +8,33 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "../includes/binaryoperations.h"
+#include "registeropertions.h"
 // #include "../includes/funcoesFornecidas.h"
 
 
 int main(){
-    FILE *arquivo = fopen("../docs/tecnologia.csv", "r"); // Ponteiro apontando para o arquivo csv
-    
-    lerArquivo(arquivo);
-    fclose(arquivo);
+    int comando;
+    scanf("%d", &comando);
 
-
-
-    /*
-
-    Estrutura de Decisão para executar funcionalidade escolhida pelo usuário
-    switch (option){
-        case 1:
-        
+    switch (comando)
+    {
+    case 1:
+        crateTabel();
+        break;
+    case 2:
+        selectFrom();
+        break;
+    case 3:
+        selectWhere();
+        break;
+    case 4:
+        selectRRN();
         break;
     
-        default:
-
-        break;
+    default:
+        printf("Comando inexistente.\n");
     }
-    
-    */
     return 0;
 }

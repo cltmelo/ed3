@@ -2,6 +2,7 @@
 #define FUNCOESFORNECIDAS_H
 
 #include <stdio.h>
+#include "../includes/funcoesFornecidas.h"
 
 /*
 -----------------------------------------------------------------------------------------------
