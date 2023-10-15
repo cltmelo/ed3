@@ -174,14 +174,13 @@ void selectWhere(){ // Pode ser deveras custosa em termos de disco, Jean, por ca
     
     // char* tmp = malloc(GLOBAL *sizeof(char)); // auxilar temp do campo a ser buscado
     char tmp[GLOBAL];
-    char* search_field; // ponteiro para armazenamento do campo buscado depois da remocao das aspas
 
     // repete o processo de busca para cada campo distinto a ser avaliado 
     for(int i = 0; i < quatidade_busca; i++){
         scanf("%s", tmp);
         scanf("%s", nomeCampo);
     
-        search_field = strtok(tmp, "\"");
+        char* search_field = strtok(tmp, "\"");; // ponteiro para armazenamento do campo buscado depois da remocao das aspas
 
         
         char* actual_field = malloc(GLOBAL*sizeof(char)); // valor do campo sendo lido no momento (me enrolei com a estática, vai com a dinâmica mesmo)
@@ -199,10 +198,11 @@ void selectWhere(){ // Pode ser deveras custosa em termos de disco, Jean, por ca
             
             // verifica se o registro atual satisfaz a busca
             if(strcmp(search_field, actual_field) == 0){
-                contBuscado++;
                 fseek(arq_bin, byte_offset(contRRN), SEEK_SET);
-                int end = lerRegistro(bin, &registro); // lê registro atual 
-                if(end) {
+
+                contBuscado++;
+
+                if(lerRegistro(bin, &registro)) { //leitura do registro atual
                     break; //fim do arquivo
                 }
 
