@@ -194,22 +194,8 @@ void selectWhere(){ // Pode ser deveras custosa em termos de disco, Jean, por ca
 
         while(1){ //tu colocou while(0) e ai o loop não executava kkkkk
             fseek(arq_bin, byte_offset(contRRN), SEEK_SET);
-            // int output = ler_campo(arq_bin, &valorCampoAtual, nomeCampo);
             char *aux;
             scan_quote_string(aux);
-            /*if(output == 1) {
-                // break com fim do arquivo
-                break;
-            }
-
-            // Erro encontrado durante a busca no arquivo
-            else if(output == 2) {
-                printf("Falha no processamento do arquivo.");
-                free(valorCampoAtual); 
-                free(tmp);
-                fclose(bin);
-                return;
-            }*/
             
             // verifica se o registro atual satisfaz a busca
             if(strcmp(valorCampoBuscado, valorCampoAtual) == 0){
