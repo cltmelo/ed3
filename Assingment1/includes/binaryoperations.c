@@ -188,6 +188,7 @@ void selectWhere(){ // Pode ser deveras custosa em termos de disco, Jean, por ca
         
         int contRRN = 0; // valor do RRN do registro a ser lido
         int contBuscado = 0; // Quantidade de registros que satisfazem busca
+        int indexAux; // soh um auxilar p ver (contBuscado - [algo])
 
         Registro registro; // registro a ser devolvido
 
@@ -215,14 +216,16 @@ void selectWhere(){ // Pode ser deveras custosa em termos de disco, Jean, por ca
             }
             contRRN++; //incremento do RRN para ir ao próximo registro
         }
+        free(actual_field);
+
         if(contBuscado == 0){
             printf("Registro inexistente.\n");
         }
-        if(i < (contBuscado - 1)){
+
+        indexAux = contBuscado - 1; //ata, era -1
+        if(i < indexAux){
             fseek(bin, TAM_CABECALHO, SEEK_SET);
         }
-
-        free(actual_field);
     }
     //free(tmp); //pra que isso pae? utilizamos estática (acho qeu vai ser mais eficiente em termos de memória)
     fecharArquivo(bin); // Fechar arquivo
@@ -231,19 +234,20 @@ void selectWhere(){ // Pode ser deveras custosa em termos de disco, Jean, por ca
 
 //Funcionalidade 4
 void buscarRRN(){
-    char nome_bin[GLOBAL]; // Nome do arquivo binario
     int RRN; // Quantidade de busca;
+    char arq_bin[GLOBAL]; // Nome do arquivo binario
 
     // Recebe o nome do arquivo de entrada e a quantidade de valores para buscar
-    scanf("%s %d", nome_bin, &RRN);
+    scanf("%s %d", arq_bin, &RRN);
 
-    FILE *arquivo = abrirArquivoLeitura(nome_bin);
+    FILE *arquivo = abrirArquivoLeitura(arq_bin);
 
-    Cabecalho *cabecalho = incializarCabecalho();  
+    Cabecalho *cabecalho = incializarCabecalho();
+    Registro* registro = inicializarRegistro();   
 
     long pos = byte_offset(RRN);
     fseek(arquivo, pos, SEEK_SET);
-    Registro* registro = inicializarRegistro();
+    
     if (RRN < cabecalho->nroParesTecnologias){
         fread(&registro->removido, sizeof(char), 1, arquivo);
         if (registro->removido == NAO_REMOVIDO){

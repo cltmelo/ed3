@@ -86,9 +86,8 @@ int lerRegistro(FILE *arquivo, Registro *registro){
 
     //leitura do nome e preenchimento com '\0' no final
     fread(registro->tecnologiaDestino.string, sizeof(char), registro->tecnologiaDestino.tamanho, arquivo);
-    registro->tecnologiaDestino.string[registro->tecnologiaDestino.tamanho] = NULL_TERM;
-
     fread(registro->tecnologiaOrigem.string, sizeof(char), registro->tecnologiaOrigem.tamanho, arquivo);
+    registro->tecnologiaDestino.string[registro->tecnologiaDestino.tamanho] = NULL_TERM;
     registro->tecnologiaOrigem.string[registro->tecnologiaOrigem.tamanho] = NULL_TERM;
     
 
@@ -103,15 +102,14 @@ int lerRegistro(FILE *arquivo, Registro *registro){
 void preenche_lixo(FILE* arquivo, Registro* registro){
     //variavel auxliar para definir o tamanho do lixo no registro atual
     int aux = (TAM_REGISTRO - (TAM_REGISTRO_FIXO + registro->tecnologiaOrigem.tamanho + registro->tecnologiaDestino.tamanho));
-    char* trash = (char*)malloc(aux*sizeof(char));
+    
+    char* trash[aux];
 
     for(int i=0; i<aux; i++){
         trash[i] = LIXO;
     }
 
     fwrite(trash, sizeof(char), aux, arquivo);
-
-    free(trash); //libera memória para o lixo
 }
 
 void escreverRegistro(FILE *arquivo, const Registro *registro){
