@@ -2,11 +2,10 @@
 #include "../includes/binaryoperations.h"
 #include "../includes/funcoesAuxiliares.h"
 
-
 /*
 ----------------------------------------------------------------------------------------------------------------------------------
 Funcionalidades do algoritmo: 
-    1. Create Table
+    1. Create Table (criaTable)
     2. Select From
     3. Select Where
     4. Select RRN (bucarRRN)
@@ -80,7 +79,7 @@ void criaTable(){
 }
 
 //Funcionalidade 2
-void selectFrom() { //Jean chamou a função de LerBIN()
+void LerBIN() {
     char arq_bin[GLOBAL];
     scanf("%s", arq_bin);
 
@@ -118,12 +117,14 @@ void selectFrom() { //Jean chamou a função de LerBIN()
             }
             
 
+            // Impressao da variável 'grupo'
             if (registro->grupo == -1) {
                 printf("NULO, ");
             } else {
                 printf("%d, ", registro->grupo);
             }
 
+            // Impressao da variável 'popularidade'
             if (registro->popularidade == -1) {
                 printf("NULO, ");
             } else {
@@ -135,7 +136,7 @@ void selectFrom() { //Jean chamou a função de LerBIN()
             } else {
                 printf("%s, ", registro->tecnologiaDestino.string);
             }
-            // Imprime a variável 'peso'
+            // Impressao da variável 'peso'
             if (registro->peso == -1) {
                 printf("NULO\n");
             } else {
@@ -148,7 +149,7 @@ void selectFrom() { //Jean chamou a função de LerBIN()
 }
 
 // Funcionalidade 3
-void selectWhere(){
+void selectWhere(){ // Pode ser deveras custosa em termos de disco, Jean, por causa da alocação dinâmica.
     char arq_bin[GLOBAL];
     char nomeCampo[GLOBAL];
     int quatidade_busca;
@@ -174,7 +175,7 @@ void selectWhere(){
     }
 
     
-    char* tmp = malloc(GLOBAL *sizeof(char)); // valor temporario do campo a ser buscado
+    char* tmp = malloc(GLOBAL *sizeof(char)); // auxilar temp do campo a ser buscado
     char* valorCampoBuscado; // ponteiro para armazenamento do campo buscado depois da remocao das aspas
 
     // repete o processo de busca para cada campo distinto a ser avaliado 
@@ -191,24 +192,24 @@ void selectWhere(){
         int contRRN = 0; // valor do RRN do registro a ser lido
         int contBuscado = 0; // Quantidade de registros que satisfazem busca
 
-        while(0){
+        while(1){ //tu colocou while(0) e ai o loop não executava kkkkk
             fseek(arq_bin, byte_offset(contRRN), SEEK_SET);
             // int output = ler_campo(arq_bin, &valorCampoAtual, nomeCampo);
             char *aux;
             scan_quote_string(aux);
-            // if(output == 1) {
-            //     // break com fim do arquivo
-            //     break;
-            // }
+            /*if(output == 1) {
+                // break com fim do arquivo
+                break;
+            }
 
-            // // Erro encontrado durante a busca no arquivo
-            // else if(output == 2) {
-            //     printf("Falha no processamento do arquivo.");
-            //     free(valorCampoAtual); 
-            //     free(tmp);
-            //     fclose(bin);
-            //     return;
-            // }
+            // Erro encontrado durante a busca no arquivo
+            else if(output == 2) {
+                printf("Falha no processamento do arquivo.");
+                free(valorCampoAtual); 
+                free(tmp);
+                fclose(bin);
+                return;
+            }*/
             
             // verifica se o registro atual satisfaz a busca
             if(strcmp(valorCampoBuscado, valorCampoAtual) == 0){
@@ -240,14 +241,6 @@ void selectWhere(){
     free(tmp);
     fecharArquivo(bin); // Fechar arquivo
 }
-
-
-
-
-
-
-
-
 
 
 //Funcionalidade 4

@@ -26,7 +26,7 @@ Funionalidades requeridas:
 */
 
 void criaTable();
-void selectFrom();
+void LerBIN();
 void selectWhere();
 void buscarRRN();
 
