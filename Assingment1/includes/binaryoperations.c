@@ -1,4 +1,3 @@
-// #include "../includes/funcoesFornecidas.h"
 #include "../includes/binaryoperations.h"
 #include "../includes/funcoesAuxiliares.h"
 
@@ -21,9 +20,8 @@ void criaTable(){
     char arq_bin[GLOBAL];
     scanf("%s", arq_csv);
     scanf("%s", arq_bin);
-
-    FILE *bin = abrirArquivoEscrita(arq_bin);
     FILE *csv = abrirArquivoLeitura(arq_csv);
+    FILE *bin = abrirArquivoEscrita(arq_bin);
 
     //Pular o cabeçalho do .csv
     while (fgetc(csv) != "\n")
@@ -31,16 +29,15 @@ void criaTable(){
         return;
     }
 
-    Cabecalho *cabecalho = incializarCabecalho();
-
-    Registro *registro = incializarRegistro();
-
-    escreverCabecalho(bin, cabecalho);
-
     // método de armazenamento em memória primária para as tecnologias lidas
     Lista *lista = cria_lista();
 
-    while (0)
+    Registro *registro = incializarRegistro();
+    Cabecalho *cabecalho = incializarCabecalho();
+
+    escreverCabecalho(bin, cabecalho);
+
+    while (1)
     {
         char *input = malloc(GLOBAL*sizeof(char));
         readline(input);
@@ -49,21 +46,20 @@ void criaTable(){
     
         Convert(input);
 
-        if(registro->tecnologiaOrigem.tamanho != 0)
-            insere_lista_final(lista, input);
         if(registro->tecnologiaDestino.tamanho != 0)
             insere_lista_final(lista, input);
 
-        escreverRegistro(bin, registro);
+        if(registro->tecnologiaOrigem.tamanho != 0)
+            insere_lista_final(lista, input);
 
-        free(input);
+        escreverRegistro(bin, registro);
         
         atualizaCabecalho(registro, cabecalho);
+
+        free(input);
     }
 
     cabecalho->nroParesTecnologias = tamanho_lista(lista);
-    
-    libera_lista(lista);
 
     cabecalho->status = REMOVIDO; //atualiza o status do cabeçalho como logicamente removido
 
@@ -73,6 +69,9 @@ void criaTable(){
     //Fechando os arquivos de dados
     fecharArquivo(csv);
     fecharArquivo(bin);
+
+    //liberando memoria alocada (lista ligada)
+    libera_lista(lista);
 
     //REQUISITO DO ENUNCIADO
     binarioNaTela(arq_bin);
@@ -92,19 +91,20 @@ void LerBIN() {
     
     while (fread(&registro->removido, sizeof(char), 1, arquivo) == REMOVIDO) {
         
-        fread(&registro->grupo, sizeof(int), 1, arquivo);
-        fread(&registro->popularidade, sizeof(int), 1, arquivo);
         fread(&registro->peso, sizeof(int), 1, arquivo);
-
-        fread(&registro->tecnologiaOrigem.tamanho, sizeof(int), 1, arquivo);
-        registro->tecnologiaOrigem.string = (char *)malloc(registro->tecnologiaOrigem.tamanho + 1);
-        fread(registro->tecnologiaOrigem.string, registro->tecnologiaOrigem.tamanho, 1, arquivo);
-        registro->tecnologiaOrigem.string[registro->tecnologiaOrigem.tamanho] = '\0';
+        fread(&registro->popularidade, sizeof(int), 1, arquivo);
+        fread(&registro->grupo, sizeof(int), 1, arquivo);
 
         fread(&registro->tecnologiaDestino.tamanho, sizeof(int), 1, arquivo);
         registro->tecnologiaDestino.string = (char *)malloc(registro->tecnologiaDestino.tamanho + 1);
         fread(registro->tecnologiaDestino.string, registro->tecnologiaDestino.tamanho, 1, arquivo);
-        registro->tecnologiaDestino.string[registro->tecnologiaDestino.tamanho] = '\0';
+        registro->tecnologiaDestino.string[registro->tecnologiaDestino.tamanho] = NULL_TERM;
+        
+        fread(&registro->tecnologiaOrigem.tamanho, sizeof(int), 1, arquivo);
+        registro->tecnologiaOrigem.string = (char *)malloc(registro->tecnologiaOrigem.tamanho + 1);
+        fread(registro->tecnologiaOrigem.string, registro->tecnologiaOrigem.tamanho, 1, arquivo);
+        registro->tecnologiaOrigem.string[registro->tecnologiaOrigem.tamanho] = NULL_TERM;
+
 
         int tamRegistro = TAM_REGISTRO_FIXO + registro->tecnologiaDestino.tamanho + registro->tecnologiaOrigem.tamanho;
         char resto[TAM_REGISTRO-tamRegistro];
@@ -153,13 +153,10 @@ void selectWhere(){ // Pode ser deveras custosa em termos de disco, Jean, por ca
     char arq_bin[GLOBAL];
     char nomeCampo[GLOBAL];
     int quatidade_busca;
-
     scanf("%s %d", arq_bin, &quatidade_busca);
-
     FILE *bin = abrirArquivoLeitura(arq_bin);
 
     Cabecalho cabecalho;
-
     int output = lerCabecalho(bin, &cabecalho);
 
     if(output == 1){
@@ -175,22 +172,24 @@ void selectWhere(){ // Pode ser deveras custosa em termos de disco, Jean, por ca
     }
 
     
-    char* tmp = malloc(GLOBAL *sizeof(char)); // auxilar temp do campo a ser buscado
-    char* valorCampoBuscado; // ponteiro para armazenamento do campo buscado depois da remocao das aspas
+    // char* tmp = malloc(GLOBAL *sizeof(char)); // auxilar temp do campo a ser buscado
+    char tmp[GLOBAL];
+    char* search_field; // ponteiro para armazenamento do campo buscado depois da remocao das aspas
 
     // repete o processo de busca para cada campo distinto a ser avaliado 
     for(int i = 0; i < quatidade_busca; i++){
-        scanf("%s", nomeCampo);
         scanf("%s", tmp);
-
-        valorCampoBuscado = strtok(tmp, "\"");
+        scanf("%s", nomeCampo);
+    
+        search_field = strtok(tmp, "\"");
 
         
-        Registro registro; // registro a ser devolvido
+        char* actual_field = malloc(GLOBAL*sizeof(char)); // valor do campo sendo lido no momento (me enrolei com a estática, vai com a dinâmica mesmo)
         
-        char* valorCampoAtual = malloc(sizeof(char) * GLOBAL); // valor do campo sendo lido no momento
         int contRRN = 0; // valor do RRN do registro a ser lido
         int contBuscado = 0; // Quantidade de registros que satisfazem busca
+
+        Registro registro; // registro a ser devolvido
 
         while(1){ //tu colocou while(0) e ai o loop não executava kkkkk
             fseek(arq_bin, byte_offset(contRRN), SEEK_SET);
@@ -198,7 +197,7 @@ void selectWhere(){ // Pode ser deveras custosa em termos de disco, Jean, por ca
             scan_quote_string(aux);
             
             // verifica se o registro atual satisfaz a busca
-            if(strcmp(valorCampoBuscado, valorCampoAtual) == 0){
+            if(strcmp(search_field, actual_field) == 0){
                 contBuscado++;
                 fseek(arq_bin, byte_offset(contRRN), SEEK_SET);
                 int end = lerRegistro(bin, &registro); // lê registro atual 
@@ -211,20 +210,21 @@ void selectWhere(){ // Pode ser deveras custosa em termos de disco, Jean, por ca
                     printRegister(&registro);
 
                 // libera as strings alocadas
-                free(registro.tecnologiaOrigem.string);
                 free(registro.tecnologiaDestino.string);
+                free(registro.tecnologiaOrigem.string);
             }
             contRRN++; //incremento do RRN para ir ao próximo registro
         }
         if(contBuscado == 0){
             printf("Registro inexistente.\n");
         }
-        free(valorCampoAtual);
         if(i < (contBuscado - 1)){
             fseek(bin, TAM_CABECALHO, SEEK_SET);
         }
+
+        free(actual_field);
     }
-    free(tmp);
+    //free(tmp); //pra que isso pae? utilizamos estática (acho qeu vai ser mais eficiente em termos de memória)
     fecharArquivo(bin); // Fechar arquivo
 }
 
@@ -270,7 +270,6 @@ void buscarRRN(){
                 printf("%s, ", registro->tecnologiaOrigem.string);
             }
             
-
             if (registro->grupo == -1) {
                 printf("NULO, ");
             } else {

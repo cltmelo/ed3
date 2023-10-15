@@ -10,8 +10,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../includes/binaryoperations.h"
-#include "registeropertions.h"
-// #include "../includes/funcoesFornecidas.h"
+#include "../includes/registeropertions.h"
+#include "../includes/funcoesFornecidas.h"
+#include "../includes/funcoesAuxiliares.h"
 
 
 int main(){

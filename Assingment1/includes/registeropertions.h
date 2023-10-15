@@ -20,6 +20,8 @@
 #define REMOVIDO '1'
 #define NAO_REMOVIDO '0'
 
+#define NULL_TERM '\0'
+
 
 // Cabeçalho com 13 bytes
 typedef struct {
@@ -69,9 +71,6 @@ void escreverRegistro(FILE *arquivo, const Registro *registro);
 
 // Função para preencher os campos vaios do registro atual comm 'LIXO'
 void preenche_lixo(FILE* arquivo, Registro* registro);
-
-// // Função para ler um campo do registro atual
-// void lerCampo(FILE* arquivo, char* stringCampo){}
 
 // Função para escrever os dados do registro no cabeçalho
 void escreverCabecalho(FILE* arquivo, Cabecalho* c);

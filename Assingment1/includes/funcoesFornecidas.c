@@ -1,5 +1,4 @@
 #include "../includes/funcoesFornecidas.h"
-// #include "../includes/binaryoperations.h"
 
 #include <stdio.h>
 #include <stdlib.h>

@@ -38,19 +38,20 @@ void fecharArquivo(FILE *arquivo){
 Registro* incializarRegistro(){
     Registro *r = (Registro*)malloc(sizeof(Registro));
     if (r == NULL) {
-        perror("Erro ao alocar memória para o registro");
+        perror("Erro ao alocar memória para o registro.\n");
         exit(EXIT_FAILURE);
     }
 
-    r->removido = '0';
+    r->removido = NAO_REMOVIDO;
     r->grupo = -1;
     r->popularidade = -1;
     r->peso = -1;
 
-    r->tecnologiaOrigem.tamanho = 0;
-    r->tecnologiaOrigem.string = NULL;
     r->tecnologiaDestino.tamanho = 0;
+    r->tecnologiaOrigem.tamanho = 0;
+
     r->tecnologiaDestino.string = NULL;
+    r->tecnologiaOrigem.string = NULL;
 
     return r;
 }
@@ -66,7 +67,7 @@ Cabecalho* incializarCabecalho(){
 }
 
 int lerRegistro(FILE *arquivo, Registro *registro){
-    
+
     //leitura do registro
     if((&(registro->removido), sizeof(char), 1, arquivo) == NAO_REMOVIDO)
         return 0; //ok na leitura deste campo
@@ -76,19 +77,20 @@ int lerRegistro(FILE *arquivo, Registro *registro){
     fread(&(registro->popularidade), sizeof(char), 1, arquivo);
 
 
-    fread(&(registro->tecnologiaOrigem.tamanho), sizeof(int), 1, arquivo);
-    registro->tecnologiaOrigem.string = malloc((registro->tecnologiaOrigem.tamanho + 1)*sizeof(char)); //alocação para o nome, pela leitura do tamanho do registro
-
     fread(&(registro->tecnologiaDestino.tamanho), sizeof(int), 1, arquivo);
-    registro->tecnologiaDestino.string = malloc((registro->tecnologiaDestino.tamanho + 1)*sizeof(char));
+    registro->tecnologiaDestino.string = malloc((registro->tecnologiaDestino.tamanho + 1)*sizeof(char)); //alocação para o nome, pela leitura do tamanho do registro
+
+    fread(&(registro->tecnologiaOrigem.tamanho), sizeof(int), 1, arquivo);
+    registro->tecnologiaOrigem.string = malloc((registro->tecnologiaOrigem.tamanho + 1)*sizeof(char)); 
 
 
     //leitura do nome e preenchimento com '\0' no final
-    fread(registro->tecnologiaOrigem.string, sizeof(char), registro->tecnologiaOrigem.tamanho, arquivo);
-    registro->tecnologiaOrigem.string[registro->tecnologiaOrigem.tamanho] = '\0';
-    
     fread(registro->tecnologiaDestino.string, sizeof(char), registro->tecnologiaDestino.tamanho, arquivo);
-    registro->tecnologiaDestino.string[registro->tecnologiaDestino.tamanho] = '\0';
+    registro->tecnologiaDestino.string[registro->tecnologiaDestino.tamanho] = NULL_TERM;
+
+    fread(registro->tecnologiaOrigem.string, sizeof(char), registro->tecnologiaOrigem.tamanho, arquivo);
+    registro->tecnologiaOrigem.string[registro->tecnologiaOrigem.tamanho] = NULL_TERM;
+    
 
     //Ignorando a leitura de lixo
     int aux = TAM_REGISTRO - (TAM_REGISTRO_FIXO + registro->tecnologiaOrigem.tamanho + registro->tecnologiaDestino.tamanho);
@@ -127,9 +129,6 @@ void escreverRegistro(FILE *arquivo, const Registro *registro){
     preenche_lixo(arquivo, registro);
 }
 
-void lerCampo(){} //Substitui a função scan_quote_string
-
-void escreverCampo(){}
 
 int lerCabecalho(FILE* arquivo, Cabecalho* c){
 
@@ -155,36 +154,6 @@ void atualizaCabecalho(Registro* registro, Cabecalho* cabecalho){
         cabecalho->nroParesTecnologias++;
     cabecalho->proxRRN++;
 }
-
-// int escreverRegistro(FILE *arquivo, const Registro *registro, int tamRegistro, Cabecalho *c){
-//     long pos =  (c->proxRRN)*(76) + 13;
-//     fseek(arquivo, pos, SEEK_SET);
-//     fwrite(&registro->removido, sizeof(char), 1, arquivo);
-//     fwrite(&registro->grupo, sizeof(int), 1, arquivo);
-//     fwrite(&registro->popularidade, sizeof(int), 1, arquivo);
-//     fwrite(&registro->peso, sizeof(int), 1, arquivo);
-//     fwrite(&registro->tecnologiaOrigem.tamanho, sizeof(int), 1, arquivo);
-//     if (registro->tecnologiaOrigem.tamanho != 0){
-//         fwrite(registro->tecnologiaOrigem.string, registro->tecnologiaOrigem.tamanho, 1, arquivo);
-//     }
-//     fwrite(&registro->tecnologiaDestino.tamanho, sizeof(int), 1, arquivo);
-//     if (registro->tecnologiaDestino.tamanho != 0){
-//         fwrite(registro->tecnologiaDestino.string, registro->tecnologiaDestino.tamanho, 1, arquivo);
-//     }   
-  
-//     c->nroParesTecnologias++;
-//     char LIXO = '$';
-//     for (int i  = tamRegistro; i < 76; i++){
-//         if (fwrite(&LIXO, 1, 1, arquivo) != 1) {
-//             printf("Erro ao preencher os bytes restantes com '$'\n");
-//         return 0;
-//         }
-//     }
-//     c->proxRRN++;
-         
-//     return 1; // Escrita bem-sucedida
-// }
-
 
 void printRegister(Registro *registro){
 
