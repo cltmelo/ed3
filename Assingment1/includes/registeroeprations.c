@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "../includes/registeropertions.h"
+#include "registeropertions.h"
 
 FILE *abrirArquivoLeitura(const char *nomeArquivo){
     FILE* arquivo;

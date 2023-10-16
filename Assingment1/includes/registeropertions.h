@@ -1,10 +1,10 @@
 #ifndef REGISTEROPERATIONS_H_INCLUDED
 #define REGISTEROPERATIONS_H_INCLUDED
 
-#include "../includes/funcoesFornecidas.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "funcoesFornecidas.h"
 
 // Quantidade de bytes do registro de dados
 #define TAM_REGISTRO 76

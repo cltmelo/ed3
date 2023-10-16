@@ -2,6 +2,7 @@
     "files.associations": {
         "binaryoperations.h": "c",
         "funcoesfornecidas.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "stdlib.h": "c"
     }
 }

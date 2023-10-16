@@ -1,4 +1,4 @@
-#include "../includes/funcoesFornecidas.h"
+#include "funcoesFornecidas.h"
 
 #include <stdio.h>
 #include <stdlib.h>

@@ -1,11 +1,11 @@
 #ifndef BINARYOPERATIONS_H_INCLUDED
 #define BINARYOPERATIONS_H_INCLUDED
 
-#include "../includes/funcoesFornecidas.h"
-#include "../includes/registeropertions.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+// #include "../includes/funcoesFornecidas.h"
+// #include "../includes/registeropertions.h"
+// #include <stdio.h>
+// #include <stdlib.h>
+// #include <string.h>
 
 /*
 OBS:

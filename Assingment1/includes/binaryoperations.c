@@ -1,5 +1,5 @@
-#include "../includes/binaryoperations.h"
-#include "../includes/funcoesAuxiliares.h"
+#include "binaryoperations.h"
+#include "funcoesAuxiliares.h"
 
 /*
 ----------------------------------------------------------------------------------------------------------------------------------
