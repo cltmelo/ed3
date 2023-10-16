@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "../includes/binaryoperations.h"
 #include "../includes/registeropertions.h"
 #include "../includes/funcoesFornecidas.h"
@@ -22,16 +23,16 @@ int main(){
     switch (comando)
     {
     case 1:
-        crateTabel();
+        criaTable();
         break;
     case 2:
-        selectFrom();
+        LerBIN();
         break;
     case 3:
         selectWhere();
         break;
     case 4:
-        selectRRN();
+        buscarRRN();
         break;
     
     default:

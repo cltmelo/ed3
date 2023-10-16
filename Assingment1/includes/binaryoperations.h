@@ -19,7 +19,7 @@ seguinte forma: o indicador de tamanho deve armazenar o valor zero.
 -----------------------------------------------------------------------------------------------
 Funionalidades requeridas:
     1. Create Table: Cria uma tabela com os campos especificados com base em um .csv e gera de saída um .bin
-    2. Select From: IMporime todos os registros de um .bin
+    2. Select From: Imprime todos os registros de um .bin
     3. Select Where: Imprime todos os registros que contém os campo(s) especificado(s)
     4. Select RRN: Imprime o registro de determiando RRN
 -----------------------------------------------------------------------------------------------
