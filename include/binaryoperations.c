@@ -1,11 +1,12 @@
-#include "../includes/binaryoperations.h"
+#include "binaryoperations.h"
+
 
 FILE *abrirArquivoLeitura(const char *nomeArquivo) {
     return fopen(nomeArquivo, "rb"); // Ponteiro no começo do arquivo
 }
 
 FILE *abrirArquivoEscrita(const char *nomeArquivo) {
-    return fopen(nomeArquivo, "wb"); // Ponteiro no começo do arquivo
+    return fopen(nomeArquivo, "wb+"); // Ponteiro no começo do arquivo
 }
 
 void fecharArquivo(FILE *arquivo) {

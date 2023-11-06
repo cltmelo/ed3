@@ -44,6 +44,6 @@ void fecharArquivo(FILE *arquivo);
 int lerRegistro(FILE *arquivo, Registro *registro);
 
 // Função para escrever um registro no arquivo binário
-int escreverRegistro(FILE *arquivo, const Registro *registro);
+int escreverRegistro(FILE *arquivo, const Registro *registro, int tamRegistro, Cabecalho* c);
 
 #endif /* BINARYOPERATIONS_H */
